@@ -6,10 +6,63 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - backend1
+      - backend2
+    networks:
+      - my_network
 
-  backend:
+  backend1:
     build:
       context: ./SimpleServer
     ports:
       - "8080:8080"
+    networks:
+      - my_network
+
+  backend2:
+    build:
+      context: ./SimpleServer
+    ports:
+      - "8081:8080"
+    networks:
+      - my_network
+
+  # Prometheus가 Nginx의 메트릭을 수집하려면 Nginx가 메트릭을 Prometheus에 노출해야 합니다. 기본적으로 Nginx는 메트릭을 노출하지 않으므로, nginx-prometheus-exporter와 같은 Exporter를 사용하여 Nginx 메트릭을 수집해야 합니다.
+  nginx-prometheus-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    ports:
+      - "9113:9113"
+    networks:
+      - my_network
+    depends_on:
+      - nginx
+    command:
+      -nginx.scrape-uri=http://nginx:80/status
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - my_network
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - nginx-prometheus-exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - my_network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
+networks:
+  my_network:
+    driver: bridge
