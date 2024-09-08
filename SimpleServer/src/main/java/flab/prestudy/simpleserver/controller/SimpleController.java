@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SimpleController {
     @GetMapping("/hello")
-    String getCbConsumer() {
+    String sayHello() {
         return "Hello";
+    }
+
+    @GetMapping("/v1/hello")
+    String sayV1Hello() {
+        return "v1 Hello";
     }
 }
