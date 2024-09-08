@@ -6,12 +6,12 @@ nginx의 다양한 옵션을 이용해서 실습환경을 만들어 봅니다.
 
 # 사용법
 ### 서버 jar생성
-1. cd /SimpleServer
-2. ./gradlew build
+1. `cd /SimpleServer`
+2. `./gradlew build`
 
 ### 도커 컴포즈 실행
-1. docker-compose up --build
-- 실험종료후 docker-compose down
+1. `docker-compose up --build`
+- 실험종료후 `docker-compose down`
 
 ### 모니터링
 1. http://localhost:3000 에 접속해 그라파나를 엽니다.
